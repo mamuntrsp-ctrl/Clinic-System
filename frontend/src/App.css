@@ -1,0 +1,240 @@
+/* ===== GLOBAL ===== */
+body {
+  margin: 0;
+}
+
+/* Outside TV background */
+.app-bg {
+  height: 100vh;
+  background: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== TV FRAME ===== */
+.tv-wrapper {
+  width: 95%;
+  height: 90%;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ===== HEADER ===== */
+.tv-header {
+  height: 60px;
+  background: #020617;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.live-badge {
+  background: red;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+/* ===== MAIN CONTENT ===== */
+.tv-content {
+  flex: 1;
+  display: flex;
+}
+
+/* IMPORTANT: height for slider */
+.left-panel,
+.right-panel {
+  height: 100%;
+}
+
+/* ===== LEFT PANEL ===== */
+.left-panel {
+  width: 30%;
+  background: white;
+  display: flex;
+}
+
+.left-slider {
+  width: 100%;
+  height: 100%;
+}
+
+/* Slide common */
+.slide-content {
+  height: 100%;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Doctor slide */
+.doctor-image {
+  width: 50%;
+  border-radius: 50%;
+  border: 4px solid #2563eb;
+  margin-bottom: 16px;
+}
+
+.doctor-name {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: rgb(30, 58, 138);
+}
+
+.doctor-degree {
+  font-size: 0.9rem;
+  margin-top: 6px;
+}
+
+.doctor-specialty {
+  background: #4f46e5;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  margin: 12px 0;
+}
+
+.schedule-box {
+  width: 100%;
+  background-color: #e0e7ff; /* soft blue */
+  border-radius: 8px;
+  padding: 10px 0;
+}
+
+.schedule-box p {
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.schedule-box-info {
+  font-weight: 600;
+  margin-bottom: 18px; /* spacing only after heading */
+  color: #1e40af; /* blue-800 */
+}
+
+/* Promo slide */
+.promo-slide {
+  background: linear-gradient(#020617, #0f172a);
+  color: white;
+}
+
+.promo-text h2 {
+  font-size: 1.6rem;
+  margin-bottom: 12px;
+  color: rgba(250, 204, 21, 1);
+}
+
+.video-placeholder {
+  font-size: 4rem;
+  opacity: 0.8;
+}
+
+.video-credit {
+  width: 100%;
+  background-color: #1b1c22;
+  border-radius: 8px;
+  padding: 10px 0;
+
+  font-size: 0.875rem; /* text-sm */
+  color: rgba(235, 231, 231, 0.909);
+  text-align: center;
+
+  border: 1px solid #4b5563; /* gray-600 */
+}
+
+/* RIGHT PANEL (PATIENT LIST) */
+.right-panel {
+  width: 70%;
+  background: #f8fafc;
+  padding: 24px;
+}
+
+/* Patient table */
+.patient-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.1rem;
+}
+
+/* Header */
+.patient-table thead tr {
+  background: #000000;
+  color: white;
+}
+
+.patient-table thead th {
+  padding: 16px 12px;
+  text-align: left;
+  font-size: 1.05rem;
+  letter-spacing: 0.5px;
+}
+
+/* Body rows */
+.patient-table tbody tr {
+  height: 56px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.patient-table tbody td {
+  padding: 14px 12px;
+  color: #020617;
+  font-weight: 500;
+}
+
+/* New row highlight */
+.patient-table th:nth-child(1),
+.patient-table td:nth-child(1) {
+  width: 15%;
+}
+
+.patient-table th:nth-child(2),
+.patient-table td:nth-child(2) {
+  width: 60%;
+}
+
+.patient-table th:nth-child(3),
+.patient-table td:nth-child(3) {
+  width: 25%;
+}
+
+/* Align STATUS / TIME column */
+.patient-table th:nth-child(3),
+.patient-table td.status {
+  text-align: center;
+}
+
+/* Status column */
+.patient-table tbody td.status {
+  text-align: center;
+  font-weight: 700;
+}
+
+/* Status colors */
+.patient-table .running {
+  color: #16a34a; /* green-600 */
+}
+
+.patient-table .next {
+  color: #2563eb; /* blue-600 */
+}
+
+/* ===== TICKER ===== */
+.ticker {
+  background: #020617;
+  color: #facc15;
+  font-size: 1.1rem;
+  padding: 10px;
+}

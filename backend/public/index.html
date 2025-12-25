@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clinic Reception Control</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      h1 {
+        color: #333;
+      }
+      .patient-list {
+        margin: 20px 0;
+      }
+      .patient {
+        padding: 10px;
+        border: 1px solid #ccc;
+        margin: 5px 0;
+      }
+      button {
+        padding: 10px 15px;
+        margin: 5px;
+        cursor: pointer;
+      }
+      input {
+        padding: 8px;
+        margin: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Clinic Reception Control</h1>
+    <div>
+      <h2>Add New Patient</h2>
+      <input type="text" id="patientName" placeholder="Patient Name" />
+      <select id="patientType">
+        <option value="REGULAR">Regular</option>
+        <option value="REPORT">Report</option>
+      </select>
+      <button onclick="addPatient()">Add Patient</button>
+    </div>
+    <div>
+      <h2>Patient Queue</h2>
+      <button onclick="loadPatients()">Refresh List</button>
+      <button onclick="callNext()">Call Next Patient</button>
+      <div id="patientList" class="patient-list"></div>
+    </div>
+
+    <script>
+      const API_BASE = "http://localhost:5000/api/patients";
+
+      async function loadPatients() {
+        try {
+          const response = await fetch(API_BASE);
+          const patients = await response.json();
+          const list = document.getElementById("patientList");
+          list.innerHTML = "";
+          patients.forEach((patient) => {
+            const div = document.createElement("div");
+            div.className = "patient";
+            div.innerHTML = `
+                        <strong>${patient.name}</strong> - Type: ${patient.type} - Status: ${patient.status}
+                        <button onclick="removePatient(${patient.id})">Remove</button>
+                    `;
+            list.appendChild(div);
+          });
+        } catch (error) {
+          console.error("Error loading patients:", error);
+        }
+      }
+
+      async function addPatient() {
+        const name = document.getElementById("patientName").value;
+        const type = document.getElementById("patientType").value;
+        if (!name) return alert("Please enter a patient name");
+        try {
+          await fetch(API_BASE, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, type }),
+          });
+          document.getElementById("patientName").value = "";
+          loadPatients();
+        } catch (error) {
+          console.error("Error adding patient:", error);
+        }
+      }
+
+      async function callNext() {
+        try {
+          const response = await fetch(`${API_BASE}/call-next`, {
+            method: "POST",
+          });
+          const result = await response.json();
+          alert(result.message);
+          loadPatients();
+        } catch (error) {
+          console.error("Error calling next patient:", error);
+        }
+      }
+
+      async function removePatient(id) {
+        try {
+          await fetch(`${API_BASE}/${id}`, { method: "DELETE" });
+          loadPatients();
+        } catch (error) {
+          console.error("Error removing patient:", error);
+        }
+      }
+
+      // Load patients on page load
+      loadPatients();
+    </script>
+  </body>
+</html>
