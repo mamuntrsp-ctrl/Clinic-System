@@ -1,11 +1,17 @@
 import prisma from "../prisma.js";
 
+/**
+ * Get all patients in FIFO order
+ */
 export const getAllPatients = () => {
   return prisma.patient.findMany({
-    orderBy: { serial: "asc" },
+    orderBy: { serial: "asc" }, // FIFO by serial
   });
 };
 
+/**
+ * Add new patient at the end of queue
+ */
 export const createPatient = async (name, type) => {
   const last = await prisma.patient.findFirst({
     orderBy: { serial: "desc" },
@@ -18,42 +24,33 @@ export const createPatient = async (name, type) => {
       name,
       serial,
       type,
-      status: type === "REPORT" ? "REPORT" : "WAITING",
+      status: "WAITING", // status kept simple
     },
   });
 };
 
+/**
+ * FIFO: remove the FIRST patient
+ */
 export const callNextPatient = async () => {
-  await prisma.patient.updateMany({
-    where: { status: "RUNNING" },
-    data: { status: "COMPLETED" },
-  });
-
-  const next = await prisma.patient.findFirst({
-    where: { status: "NEXT" },
+  const firstPatient = await prisma.patient.findFirst({
     orderBy: { serial: "asc" },
   });
 
-  if (next) {
-    return prisma.patient.update({
-      where: { id: next.id },
-      data: { status: "RUNNING" },
-    });
+  if (!firstPatient) {
+    return null; // queue empty
   }
 
-  const waiting = await prisma.patient.findFirst({
-    where: { status: "WAITING" },
-    orderBy: { serial: "asc" },
+  await prisma.patient.delete({
+    where: { id: firstPatient.id },
   });
 
-  if (!waiting) return null;
-
-  return prisma.patient.update({
-    where: { id: waiting.id },
-    data: { status: "RUNNING" },
-  });
+  return firstPatient;
 };
 
+/**
+ * Remove a patient manually
+ */
 export const deletePatient = (id) => {
   return prisma.patient.delete({ where: { id } });
 };

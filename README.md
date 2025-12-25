@@ -1,6 +1,6 @@
 # Clinic System
 
-A fullstack webapp for clinic management with patient queuing and waiting room display.
+A fullstack webapp for clinic management with patient queuing and waiting room display. (updated)
 
 ## Setup Instructions
 

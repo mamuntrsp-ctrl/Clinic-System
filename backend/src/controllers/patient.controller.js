@@ -13,7 +13,7 @@ export const addPatient = async (req, res) => {
 
 export const callNext = async (req, res) => {
   const patient = await service.callNextPatient();
-  res.json(patient);
+  res.json(patient); // null if queue empty
 };
 
 export const removePatient = async (req, res) => {
