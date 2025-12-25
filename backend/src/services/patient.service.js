@@ -1,16 +1,18 @@
 import prisma from "../prisma.js";
 
 /**
- * Get all patients in FIFO order
+ * Admin view: show everything
  */
 export const getAllPatients = () => {
   return prisma.patient.findMany({
-    orderBy: { serial: "asc" }, // FIFO by serial
+    orderBy: { serial: "asc" },
   });
 };
 
 /**
- * Add new patient at the end of queue
+ * Create patient
+ * If no NEXT and no RUNNING → NEXT
+ * Else → WAITING
  */
 export const createPatient = async (name, type) => {
   const last = await prisma.patient.findFirst({
@@ -19,38 +21,66 @@ export const createPatient = async (name, type) => {
 
   const serial = last ? last.serial + 1 : 101;
 
+  const active = await prisma.patient.findFirst({
+    where: {
+      status: { in: ["NEXT", "RUNNING"] },
+    },
+  });
+
   return prisma.patient.create({
     data: {
       name,
       serial,
-      type,
-      status: "WAITING", // status kept simple
+      type, // REGULAR | REPORT
+      status: active ? "WAITING" : "NEXT",
     },
   });
 };
 
 /**
- * FIFO: remove the FIRST patient
+ * FIFO — bulletproof version
  */
 export const callNextPatient = async () => {
-  const firstPatient = await prisma.patient.findFirst({
+  // RUNNING → COMPLETED
+  await prisma.patient.updateMany({
+    where: { status: "RUNNING" },
+    data: { status: "COMPLETED" },
+  });
+
+  // NEXT → RUNNING
+  const next = await prisma.patient.findFirst({
+    where: { status: "NEXT" },
     orderBy: { serial: "asc" },
   });
 
-  if (!firstPatient) {
-    return null; // queue empty
+  if (next) {
+    await prisma.patient.update({
+      where: { id: next.id },
+      data: { status: "RUNNING" },
+    });
   }
 
-  await prisma.patient.delete({
-    where: { id: firstPatient.id },
+  // WAITING → NEXT (only ONE)
+  const waiting = await prisma.patient.findFirst({
+    where: { status: "WAITING" },
+    orderBy: { serial: "asc" },
   });
 
-  return firstPatient;
+  if (waiting) {
+    await prisma.patient.update({
+      where: { id: waiting.id },
+      data: { status: "NEXT" },
+    });
+  }
+
+  return true;
 };
 
 /**
- * Remove a patient manually
+ * Manual delete
  */
 export const deletePatient = (id) => {
-  return prisma.patient.delete({ where: { id } });
+  return prisma.patient.delete({
+    where: { id },
+  });
 };

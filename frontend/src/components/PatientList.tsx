@@ -4,12 +4,24 @@ import { getPatients } from "../services/api";
 
 const PatientList = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
+  const [runningPatient, setRunningPatient] = useState<Patient | null>(null);
 
   useEffect(() => {
     const fetchPatients = async () => {
       try {
         const data = await getPatients();
-        setPatients(data);
+
+        // IMPORTANT: hide completed patients
+        const activePatients = data.filter((p) => p.status !== "COMPLETED");
+        
+        // Find the running patient
+        const running = activePatients.find((p) => p.status === "RUNNING");
+        setRunningPatient(running || null);
+        
+        // Set patients to non-running active patients
+        setPatients(activePatients.filter((p) => p.status !== "RUNNING"));
+        
+        // You can store runningPatient in state if needed, but for now, we'll display it directly
       } catch (error) {
         console.error("Error fetching patients:", error);
       }
@@ -46,8 +58,8 @@ const PatientList = () => {
             <>
               {/* RUNNING ROW */}
               <tr>
-                <td></td>
-                <td></td>
+                <td>{runningPatient?.serial || ""}</td>
+                <td>{runningPatient?.name || ""}</td>
                 <td style={{ color: "green" }}>RUNNING</td>
               </tr>
 
