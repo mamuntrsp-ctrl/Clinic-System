@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/assets.d.ts","./src/main.tsx","./src/types.ts","./src/components/doctorslide.tsx","./src/components/leftpanel.tsx","./src/components/patientlist.tsx","./src/components/promoslide.tsx","./src/components/ticker.tsx","./src/services/api.ts"],"errors":true,"version":"5.9.3"}
