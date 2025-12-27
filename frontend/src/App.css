@@ -225,10 +225,12 @@ body {
 /* Status colors */
 .patient-table .running {
   color: #16a34a; /* green-600 */
+  font-weight: bold;
 }
 
 .patient-table .next {
   color: #2563eb; /* blue-600 */
+  font-weight: bold;
 }
 
 /* ===== TICKER ===== */

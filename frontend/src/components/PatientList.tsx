@@ -11,7 +11,7 @@ const PatientList = () => {
       try {
         const data = await getPatients();
 
-        // hide completed
+        // Hide completed
         const active = data.filter((p) => p.status !== "COMPLETED");
 
         const running = active.find((p) => p.status === "RUNNING");
@@ -53,9 +53,7 @@ const PatientList = () => {
                 <tr>
                   <td>{runningPatient.serial}</td>
                   <td>{runningPatient.name}</td>
-                  <td style={{ color: "green", fontWeight: "bold" }}>
-                    RUNNING
-                  </td>
+                  <td className="running">RUNNING</td>
                 </tr>
               )}
 
@@ -67,7 +65,6 @@ const PatientList = () => {
                 } else if (p.type === "REPORT") {
                   display = "REPORT";
                 } else {
-                  // ✅ FIXED: time comes from backend
                   display = p.scheduledTime || "";
                 }
 
@@ -75,7 +72,9 @@ const PatientList = () => {
                   <tr key={p.id}>
                     <td>{p.serial}</td>
                     <td>{p.name}</td>
-                    <td>{display}</td>
+                    <td className={p.status === "NEXT" ? "next" : undefined}>
+                      {display}
+                    </td>
                   </tr>
                 );
               })}
