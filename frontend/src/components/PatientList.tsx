@@ -13,14 +13,14 @@ const PatientList = () => {
 
         // IMPORTANT: hide completed patients
         const activePatients = data.filter((p) => p.status !== "COMPLETED");
-        
+
         // Find the running patient
         const running = activePatients.find((p) => p.status === "RUNNING");
         setRunningPatient(running || null);
-        
+
         // Set patients to non-running active patients
         setPatients(activePatients.filter((p) => p.status !== "RUNNING"));
-        
+
         // You can store runningPatient in state if needed, but for now, we'll display it directly
       } catch (error) {
         console.error("Error fetching patients:", error);
@@ -31,8 +31,6 @@ const PatientList = () => {
     const interval = setInterval(fetchPatients, 2000);
     return () => clearInterval(interval);
   }, []);
-
-  let currentTime = new Date("1970-01-01T10:00:00");
 
   return (
     <div className="right-panel">
@@ -56,35 +54,43 @@ const PatientList = () => {
             </tr>
           ) : (
             <>
-              {/* RUNNING ROW */}
-              <tr>
-                <td>{runningPatient?.serial || ""}</td>
-                <td>{runningPatient?.name || ""}</td>
-                <td style={{ color: "green" }}>RUNNING</td>
-              </tr>
-
-              {patients.map((p, index) => {
-                let display;
-
-                if (index === 0) {
-                  display = "NEXT";
-                } else if (p.type === "REPORT") {
-                  display = "Report";
-                } else {
-                  currentTime = new Date(
-                    currentTime.getTime() + 15 * 60 * 1000
-                  );
-                  display = currentTime.toTimeString().slice(0, 5);
-                }
-
-                return (
-                  <tr key={p.id}>
-                    <td>{p.serial}</td>
-                    <td>{p.name}</td>
-                    <td>{display}</td>
+              {runningPatient && (
+                <>
+                  {/* RUNNING ROW */}
+                  <tr>
+                    <td>{runningPatient.serial}</td>
+                    <td>{runningPatient.name}</td>
+                    <td style={{ color: "green" }}>RUNNING</td>
                   </tr>
-                );
-              })}
+                </>
+              )}
+
+              {(() => {
+                let regularCounter = 0;
+                return patients.map((p, index) => {
+                  let display;
+
+                  if (index === 0) {
+                    display = "NEXT";
+                  } else if (p.type === "REPORT") {
+                    display = "REPORT";
+                  } else {
+                    const baseTime = new Date("1970-01-01T10:00:00");
+                    const patientTime = new Date(
+                      baseTime.getTime() + (p.serial - 101) * 15 * 60 * 1000
+                    );
+                    display = patientTime.toTimeString().slice(0, 5);
+                  }
+
+                  return (
+                    <tr key={p.id}>
+                      <td>{p.serial}</td>
+                      <td>{p.name}</td>
+                      <td>{display}</td>
+                    </tr>
+                  );
+                });
+              })()}
             </>
           )}
         </tbody>
